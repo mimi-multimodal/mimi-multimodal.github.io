@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mimi Multimodal AI | Failure and recovery labels for real robot footage</title>
+<meta name="description" content="I label where your robot failed and where it recovered on real footage, and keep a license-verified index of public robot failure datasets. Your first 10 clips are free.">
+<link rel="canonical" href="https://mimi-multimodal.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mimi-multimodal.github.io/">
+<meta property="og:title" content="Mimi Multimodal AI">
+<meta property="og:description" content="Failure and recovery labels for real robot footage, plus a license-verified index of public robot failure datasets.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Mimi Multimodal AI","url":"https://mimi-multimodal.github.io/","founder":{"@type":"Person","name":"Mimi Han"},"sameAs":["https://www.linkedin.com/in/mimi-han-31073a3b3","https://github.com/mimi-multimodal"]}
+</script>
+<style>
+:root{
+  --black:#000;
+  --white:#fff;
+  --gold:#d4a02a;
+  --green:#1d6b55;
+  --steel:#5b5f66;
+  --frame:#eeeff1;
+  --rule:#d9dbdf;
+  --tape:repeating-linear-gradient(-45deg,#000 0 6px,#d4a02a 6px 12px);
+  --measure:68ch;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--white);color:var(--black);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:1.0625rem;line-height:1.6;font-variant-numeric:tabular-nums}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+a:focus-visible{outline:3px solid var(--black);outline-offset:3px}
+p{margin:0 0 1rem;max-width:var(--measure)}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.25rem}
+
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1.5rem;padding-top:1.1rem;padding-bottom:1.1rem;border-bottom:1px solid var(--rule)}
+.brand{display:inline-flex;align-items:center;gap:.6rem;font-stretch:118%;font-weight:750;font-size:1.05rem;text-decoration:none}
+.mark{width:18px;height:18px;background:var(--tape);border:1px solid var(--black)}
+.top nav{display:flex;flex-wrap:wrap;gap:.25rem 1.25rem}
+.top nav a{text-decoration:none;font-weight:550}
+.top nav a:hover{text-decoration:underline}
+
+.hero{padding-top:clamp(2.5rem,7vw,5rem);padding-bottom:clamp(2.5rem,6vw,4rem)}
+h1{font-stretch:125%;font-weight:800;font-size:clamp(2.1rem,7vw,4.6rem);line-height:1.02;letter-spacing:-.02em;margin:0;max-width:13.5em}
+.lede{font-size:clamp(1.1rem,2.2vw,1.3rem);line-height:1.5;margin:1.5rem 0 1.75rem;max-width:40em}
+.ctas{display:flex;flex-wrap:wrap;gap:.75rem;margin:0}
+.btn{display:inline-block;padding:.8rem 1.15rem;border:2px solid var(--black);border-radius:6px;font-weight:650;text-decoration:none;line-height:1.2}
+.btn-solid{background:var(--black);color:var(--white)}
+.btn-solid:hover{background:var(--gold);color:var(--black)}
+.btn-line{background:var(--white)}
+.btn-line:hover{background:var(--frame)}
+
+.clip{margin:clamp(2.5rem,6vw,4rem) 0 0}
+.frames{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:clamp(.35rem,1.2vw,.9rem)}
+.frame{display:flex;flex-direction:column;gap:.35rem;margin:0}
+.frame svg{display:block;width:100%;height:auto;background:var(--frame);border-radius:4px}
+.frame.is-fail svg{outline:3px solid var(--gold);outline-offset:-3px}
+.frame.is-rec svg{outline:3px solid var(--green);outline-offset:-3px}
+.frame span{font-size:.8rem;color:var(--steel);text-align:center}
+.track{position:relative;height:14px;margin-top:1rem;background:linear-gradient(var(--steel),var(--steel)) no-repeat 50% 50%/83.333% 2px}
+.track .fail{position:absolute;top:0;bottom:0;left:56.25%;width:11.11%;background:var(--tape);transform-origin:left center;animation:grow .35s linear 1.8s both}
+.track .rec{position:absolute;top:-5px;bottom:-5px;left:88.89%;width:3px;margin-left:-1.5px;background:var(--green);animation:pop .25s ease-out 2.82s both}
+.track .head{position:absolute;top:-7px;bottom:-7px;left:91.667%;width:2px;margin-left:-1px;background:var(--black);animation:scan 2.6s linear .3s both}
+@keyframes scan{from{left:8.333%}to{left:91.667%}}
+@keyframes grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes pop{from{opacity:0;transform:scaleY(.2)}to{opacity:1;transform:scaleY(1)}}
+@media (prefers-reduced-motion:reduce){.track .fail,.track .rec,.track .head{animation:none}html{scroll-behavior:auto}}
+.legend{display:flex;flex-wrap:wrap;gap:.5rem 2rem;margin-top:1.1rem;font-size:.97rem}
+.key::before{content:"";display:inline-block;width:1.5em;height:.8em;margin-right:.5em;vertical-align:-.05em}
+.key-fail::before{background:var(--tape)}
+.key-rec::before{width:.8em;border-radius:50%;background:var(--green)}
+.legend .note{flex-basis:100%;color:var(--steel);font-size:.9rem}
+
+.sec{padding-top:clamp(3rem,7vw,5rem);padding-bottom:clamp(3rem,7vw,5rem);border-top:1px solid var(--rule)}
+h2{font-stretch:112%;font-weight:750;font-size:clamp(1.6rem,3.6vw,2.4rem);line-height:1.12;letter-spacing:-.01em;margin:0 0 1.75rem;max-width:22em}
+h3{font-stretch:106%;font-weight:700;font-size:1.12rem;line-height:1.3;margin:0 0 .3rem}
+
+.steps{list-style:none;counter-reset:step;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));gap:2rem 2.5rem}
+.steps li{counter-increment:step;position:relative;padding-left:2.9rem}
+.steps li::before{content:counter(step);position:absolute;left:0;top:-.15rem;font-stretch:125%;font-weight:800;font-size:2rem;line-height:1}
+.steps li p{margin:0}
+.steps .mine::after{content:"";position:absolute;left:2rem;top:.15rem;bottom:.15rem;width:5px;background:var(--tape)}
+
+.spec{margin:0 0 2.5rem;max-width:52rem}
+.spec div{display:grid;grid-template-columns:11rem 1fr;gap:1rem;padding:.9rem 0;border-bottom:1px solid var(--rule)}
+.spec div:first-child{border-top:2px solid var(--black)}
+.spec dt{font-weight:700}
+.spec dd{margin:0}
+.pilot{background:var(--frame);border-radius:8px;padding:clamp(1.25rem,3vw,2rem);max-width:52rem}
+.pilot h3{font-size:1.3rem;margin-bottom:.5rem}
+
+.table-scroll{overflow-x:auto;margin:1.75rem 0 1rem;border-top:2px solid var(--black)}
+.table-scroll:focus-visible{outline:3px solid var(--black);outline-offset:3px}
+table{border-collapse:collapse;width:100%;min-width:46rem;font-size:.95rem;line-height:1.45}
+th{text-align:left;font-weight:700;padding:.75rem .9rem .75rem 0;border-bottom:1px solid var(--black);vertical-align:bottom}
+td{padding:.7rem .9rem .7rem 0;border-bottom:1px solid var(--rule);vertical-align:top}
+td:first-child a{font-weight:650}
+.small{font-size:.92rem;color:var(--steel)}
+
+.plain{margin:0 0 1rem;padding-left:1.15rem;max-width:var(--measure)}
+.plain li{margin:.55rem 0}
+
+.foot{padding-top:2rem;padding-bottom:3rem;border-top:1px solid var(--rule);color:var(--steel);font-size:.92rem}
+
+@media (max-width:40rem){
+  .spec div{grid-template-columns:1fr;gap:.15rem}
+  .legend{gap:.4rem 1.5rem}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="cup"><path d="M42 62 L40 34 L60 34 L58 62 Z" fill="#fff" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/><path d="M40.4 39 H59.6" stroke="#000" stroke-width="1"/></g>
+    <g id="grip-open"><rect x="47" y="-2" width="6" height="24"/><rect x="31" y="22" width="38" height="4"/><rect x="31" y="26" width="3" height="16"/><rect x="66" y="26" width="3" height="16"/></g>
+    <g id="grip-closed"><rect x="47" y="-2" width="6" height="24"/><rect x="36" y="22" width="28" height="4"/><rect x="37" y="26" width="3" height="18"/><rect x="60" y="26" width="3" height="18"/></g>
+    <path id="table" d="M6 62.8 H94" stroke="#5b5f66" stroke-width="1.6"/>
+  </defs>
+</svg>
+
+<header class="top wrap">
+  <a class="brand" href="#top"><span class="mark" aria-hidden="true"></span>Mimi Multimodal AI</a>
+  <nav aria-label="Sections">
+    <a href="#pilot">Pilot</a>
+    <a href="#monthly">Monthly</a>
+    <a href="#index">Index</a>
+    <a href="#tools">Tools</a>
+    <a href="#about">About</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero wrap">
+    <h1>I mark where your robot failed, and where it recovered.</h1>
+    <p class="lede">Send me real robot footage. For every clip you get the failure segment, an error code, the recovery point and whether the robot recovered. Your first 10 clips are free.</p>
+    <p class="ctas">
+      <a class="btn btn-solid" href="https://github.com/mimi-multimodal/robot-failure-schema-tools/issues/new?title=Pilot%20request">Request a free pilot</a>
+      <a class="btn btn-line" href="https://www.linkedin.com/in/mimi-han-31073a3b3">Message me on LinkedIn</a>
+    </p>
+
+    <figure class="clip">
+      <div class="frames">
+        <figure class="frame">
+          <svg viewBox="0 0 100 72" role="img" aria-label="Frame 0: the gripper approaches the cup"><use href="#table"/><use href="#cup"/><use href="#grip-open" transform="translate(0,-14)"/></svg>
+          <span>f000</span>
+        </figure>
+        <figure class="frame">
+          <svg viewBox="0 0 100 72" role="img" aria-label="Frame 48: the gripper closes on the cup"><use href="#table"/><use href="#cup"/><use href="#grip-closed"/></svg>
+          <span>f048</span>
+        </figure>
+        <figure class="frame">
+          <svg viewBox="0 0 100 72" role="img" aria-label="Frame 96: the cup is lifted"><use href="#table"/><use href="#cup" transform="translate(0,-14)"/><use href="#grip-closed" transform="translate(0,-14)"/></svg>
+          <span>f096</span>
+        </figure>
+        <figure class="frame is-fail">
+          <svg viewBox="0 0 100 72" role="img" aria-label="Frame 144: the cup slips out of the gripper"><use href="#table"/><use href="#cup" transform="translate(6,-2) rotate(35 50 48)"/><use href="#grip-closed" transform="translate(0,-14)"/><path d="M76 30 l6 -3 M78 37 l6 -3" stroke="#5b5f66" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span>f144</span>
+        </figure>
+        <figure class="frame">
+          <svg viewBox="0 0 100 72" role="img" aria-label="Frame 192: the cup lies on the table and the gripper comes back for it"><use href="#table"/><use href="#cup" transform="translate(4,0.4) rotate(-90 50 52)"/><use href="#grip-open" transform="translate(0,-6)"/></svg>
+          <span>f192</span>
+        </figure>
+        <figure class="frame is-rec">
+          <svg viewBox="0 0 100 72" role="img" aria-label="Frame 240: the cup is grasped again and lifted"><use href="#table"/><use href="#cup" transform="translate(0,-14)"/><use href="#grip-closed" transform="translate(0,-14)"/></svg>
+          <span>f240</span>
+        </figure>
+      </div>
+      <div class="track" aria-hidden="true"><span class="fail"></span><span class="rec"></span><span class="head"></span></div>
+      <figcaption class="legend">
+        <span class="key key-fail">Failure f138 to f170: the cup slipped out of the gripper</span>
+        <span class="key key-rec">Recovered at f232: grasped again and lifted</span>
+        <span class="note">What a label looks like, on an 8-second example clip at 30 fps.</span>
+      </figcaption>
+    </figure>
+  </section>
+
+  <section class="sec wrap" aria-labelledby="why">
+    <h2 id="why">Simulation can multiply a real failure. Someone has to find it first.</h2>
+    <ol class="steps">
+      <li><h3>A robot fails in the real world</h3><p>Often in a scene it never saw in training.</p></li>
+      <li class="mine"><h3>Someone finds and marks it</h3><p>Where the failure starts and ends, what kind it is, and whether and when the robot recovered. This is the part I do.</p></li>
+      <li><h3>Simulation multiplies it</h3><p>One marked failure can become many training variations.</p></li>
+      <li><h3>The robot fails less</h3><p>The next deployment meets fewer surprises.</p></li>
+    </ol>
+  </section>
+
+  <section class="sec wrap" id="pilot" aria-labelledby="get">
+    <h2 id="get">What you get for each clip</h2>
+    <dl class="spec">
+      <div><dt>Failure segment</dt><dd>The start and end frame of the failure.</dd></div>
+      <div><dt>Error code</dt><dd>What kind of failure it was, mapped to RoboFAC failure types.</dd></div>
+      <div><dt>Recovery</dt><dd>Whether the robot recovered, and the frame where it did.</dd></div>
+      <div><dt>Checks</dt><dd>A QA pass, plus a manifest with a SHA-256 checksum for every file.</dd></div>
+      <div><dt>Rights</dt><dd>The labels are yours to train on and ship with.</dd></div>
+    </dl>
+    <div class="pilot">
+      <h3>Free pilot: your first 10 clips</h3>
+      <p>If your footage can be public, open a pilot request on GitHub. If it's private, message me on LinkedIn first and we'll agree on how to share it.</p>
+      <p class="ctas">
+        <a class="btn btn-solid" href="https://github.com/mimi-multimodal/robot-failure-schema-tools/issues/new?title=Pilot%20request">Request a free pilot</a>
+        <a class="btn btn-line" href="https://www.linkedin.com/in/mimi-han-31073a3b3">Message me on LinkedIn</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="sec wrap" id="monthly" aria-labelledby="mo">
+    <h2 id="mo">After the pilot: a monthly review</h2>
+    <p>Deployed robots keep failing in new ways. On a monthly subscription I work like a part-time member of your team: every month I review your new footage and deliver the same labels for each clip, the failure segment, the error code and the recovery point.</p>
+    <p>We set the hours per month and the price together after your free pilot.</p>
+    <p class="ctas">
+      <a class="btn btn-solid" href="https://github.com/mimi-multimodal/robot-failure-schema-tools/issues/new?title=Monthly%20review%20request">Ask about a monthly review</a>
+      <a class="btn btn-line" href="https://www.linkedin.com/in/mimi-han-31073a3b3">Message me on LinkedIn</a>
+    </p>
+  </section>
+
+  <section class="sec wrap" id="index" aria-labelledby="idx">
+    <h2 id="idx">The Failure Data Index</h2>
+    <p>20 public robot failure and recovery datasets. For each one I opened the original dataset card, license file, paper and project page instead of copying a catalog.</p>
+    <p>Of the 20, 8 allow commercial use, 2 don't, 3 state no license, and 7 aren't released or aren't failure datasets. Only REBOOT is public, allows commercial use and includes executable recovery trajectories, and even it lists three different licenses. None of the 20 offers real-robot failures from deployed policies under a confirmed commercial license.</p>
+    <div class="table-scroll" role="region" aria-label="The Failure Data Index" tabindex="0">
+      <table>
+        <thead>
+          <tr><th scope="col">Dataset</th><th scope="col">Commercial use</th><th scope="col">Sim or real</th><th scope="col">Recovery trajectories</th><th scope="col">License, as stated</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><a href="https://huggingface.co/REBOOT26">REBOOT</a></td><td>Yes*</td><td>Real</td><td>Yes</td><td>HF cards apache-2.0, project page CC BY 4.0, paper CC BY-NC-SA 4.0</td></tr>
+          <tr><td><a href="https://huggingface.co/datasets/KGB0/pick_and_place_failure_labeling">KGB0 pick_and_place_failure_labeling</a></td><td>Yes</td><td>Not stated</td><td>No</td><td>apache-2.0</td></tr>
+          <tr><td><a href="https://huggingface.co/datasets/fastwalker1118/B1k_Recovery">B1k_Recovery (BEHAVIOR-1K)</a></td><td>Unclear</td><td>Sim</td><td>Yes, sim-generated</td><td>None stated</td></tr>
+          <tr><td><a href="https://huggingface.co/datasets/HaptalAI/robotics-failure-benchmark">Haptal Robotics Failure Benchmark v1.0</a></td><td>Yes</td><td>Not stated</td><td>Unknown</td><td>apache-2.0 (card metadata)</td></tr>
+          <tr><td><a href="https://oopsie-data.com/">Oopsie Data</a></td><td>N/A, unreleased</td><td>Real</td><td>Unknown</td><td>CC BY 4.0 once released</td></tr>
+          <tr><td><a href="https://huggingface.co/datasets/MINT-SJTU/RoboFAC-dataset">RoboFAC</a></td><td>Yes</td><td>Sim and real</td><td>No</td><td>MIT</td></tr>
+          <tr><td><a href="https://huggingface.co/datasets/sii-rhos-ai/ViFailback-Dataset">ViFailback</a></td><td>Yes</td><td>Real</td><td>Unconfirmed</td><td>MIT</td></tr>
+          <tr><td><a href="https://droid-dataset.github.io/">DROID</a></td><td>Yes</td><td>Real</td><td>No</td><td>CC BY 4.0 (in the paper only)</td></tr>
+          <tr><td><a href="https://rail-berkeley.github.io/bridgedata/">BridgeData V2</a></td><td>Yes</td><td>Real</td><td>No</td><td>CC BY 4.0</td></tr>
+          <tr><td><a href="https://huggingface.co/datasets/agibot-world/AgiBotWorld2026">AgiBot World 2026</a></td><td>No</td><td>Real</td><td>Yes</td><td>CC BY-NC-SA 4.0</td></tr>
+          <tr><td><a href="https://aha-vlm.github.io/">AHA</a></td><td>No</td><td>Sim</td><td>No</td><td>NVIDIA License, non-commercial</td></tr>
+          <tr><td><a href="https://github.com/vla-safe/SAFE">SAFE</a></td><td>Unclear</td><td>Sim and real</td><td>No</td><td>None stated</td></tr>
+          <tr><td><a href="https://jimntu.github.io/FailSafe/">FailSafe</a></td><td>N/A, unreleased</td><td>Sim</td><td>Partial</td><td>Data not released</td></tr>
+          <tr><td><a href="https://huggingface.co/collections/paulpacaud/robotic-failure-detection-dataset-and-model-guardian">GuardianFail-36k</a></td><td>Yes*</td><td>Sim and real</td><td>No</td><td>apache-2.0 (2 of 3 parts checked)</td></tr>
+          <tr><td><a href="https://arxiv.org/abs/2603.05641">RFM-HRI</a></td><td>N/A, unreleased</td><td>Real</td><td>No</td><td>Data not released</td></tr>
+          <tr><td><a href="https://huggingface.co/datasets/X-Humanoid/Robo-ValueRL">Robo-ValueRL</a></td><td>Unclear</td><td>Real</td><td>Yes</td><td>Not on the card</td></tr>
+          <tr><td><a href="https://arxiv.org/abs/2603.15600">PRIMO-R1</a></td><td>N/A, not a failure dataset</td><td>Sim and real</td><td>No</td><td>Data release not stated</td></tr>
+          <tr><td><a href="https://arxiv.org/abs/2506.18123">RoboArena</a></td><td>N/A, unreleased</td><td>Real</td><td>No</td><td>Data release not confirmed</td></tr>
+          <tr><td><a href="https://recova-bot.github.io/">Recova</a></td><td>N/A, unreleased</td><td>Sim and real</td><td>Unknown</td><td>Data not released</td></tr>
+          <tr><td><a href="https://liulin815.github.io/LIBERO-Recovery/">LIBERO-RECOVER</a></td><td>N/A, unreleased</td><td>Sim</td><td>Unknown</td><td>Release announced only</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">Last verified 2026-10-13. Yes* means the sources disagree or one part wasn't checked. <a href="failure-data-index.csv" download>Download the CSV</a> for notes, scale, modalities and evidence links. This isn't legal advice: licenses change, so check the original before you use a dataset.</p>
+  </section>
+
+  <section class="sec wrap" id="tools" aria-labelledby="tl">
+    <h2 id="tl">Free tools</h2>
+    <p><a href="https://github.com/mimi-multimodal/robot-failure-schema-tools">robot-failure-schema-tools</a> is MIT licensed and has two parts.</p>
+    <ul class="plain">
+      <li><b>Converter.</b> Puts failure and recovery data from CSV, Parquet or JSON into one schema, with a SHA-256 manifest. Empty fields stay empty; nothing is guessed.</li>
+      <li><b>Scorer.</b> Compares synthetic and real failures on four axes (failure type, failure length, recovery success and recovery delay) and lists the real failure types your synthetic data never produced.</li>
+    </ul>
+  </section>
+
+  <section class="sec wrap" id="about" aria-labelledby="ab">
+    <h2 id="ab">About</h2>
+    <p>I'm Mimi Han, and I run Mimi Multimodal AI on my own. I build open tools for robot failure data and label failure and recovery on real footage.</p>
+    <p>In October 2026, my question about logging real-world failures was answered live on NVIDIA's "Closing the Real-to-Sim-to-Real Loop for Physical AI" livestream. <a href="https://www.youtube.com/watch?v=q1UFopOrrQM">Watch the recording</a></p>
+    <p class="ctas">
+      <a class="btn btn-solid" href="https://www.linkedin.com/in/mimi-han-31073a3b3">Message me on LinkedIn</a>
+      <a class="btn btn-line" href="https://github.com/mimi-multimodal">See my GitHub</a>
+    </p>
+  </section>
+</main>
+
+<footer class="foot wrap">
+  <p>© 2026 Mimi Han, Mimi Multimodal AI. The index text and CSV are CC BY 4.0. Each listed dataset keeps its own license.</p>
+</footer>
+</body>
+</html>
